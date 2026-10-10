@@ -44,6 +44,10 @@ Languages included: **English** and **Italian**.
 <img width="287" height="313" alt="Screenshot 2026-10-10 150307" src="https://github.com/user-attachments/assets/8668a34d-c11e-45cb-a09e-3212467da785" />
 ---
 <img width="317" height="161" alt="Screenshot 2026-10-10 150332" src="https://github.com/user-attachments/assets/07080d12-a35d-461a-9946-ec16ee99566a" />
+---
+<img width="2294" height="919" alt="Screenshot 2026-10-10 151810" src="https://github.com/user-attachments/assets/1efc31b7-0104-4532-9dc1-e6297d365463" />
+---
+<img width="2298" height="552" alt="Screenshot 2026-10-10 151819" src="https://github.com/user-attachments/assets/a57f66b8-c7c2-4920-8995-88b9d85b210a" />
 
 ---
 
