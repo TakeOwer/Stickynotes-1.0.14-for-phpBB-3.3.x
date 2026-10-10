@@ -5,9 +5,11 @@
 ![PHP](https://img.shields.io/badge/PHP-%3E%3D7.4-377a33)
 ![License](https://img.shields.io/badge/license-GPL--2.0--only-7f7f7f)
 
-**Extension:** `salvocortesiano/stickynotes` · **Version:** 1.0.15
+**Extension:** `salvocortesiano/stickynotes`
+**Version:** 1.0.15
 **Requirements:** phpBB 3.3.x (tested on 3.3.19), PHP 7.4 or higher
-**License:** [GPL-2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) · **Author:** Salvo Cortesiano — [Le Ombre della Rete 360°](https://netshadows.de/ombra)
+**License:** [GPL-2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+**Author:** Salvo Cortesiano — [Le Ombre della Rete 360°](https://netshadows.de/ombra)
 
 Post-it style notes that every member can create, write, colour and drag anywhere on the board. When they are not needed they hide in a pop-up bar that can sit in any of the four corners of the screen. Notes can have due-date alerts (board pop-up, notification bell and browser push notifications), can be shared with users and groups, and are fully managed from the ACP.
 
