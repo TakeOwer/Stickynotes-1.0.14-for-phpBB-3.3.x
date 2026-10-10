@@ -1,0 +1,38 @@
+{% INCLUDE 'overall_header.html' %}
+
+<h1>{{ lang('ACP_STICKYNOTES_CHECKUP') }}</h1>
+{% INCLUDE 'acp_stickynotes_header.html' %}
+<p>{{ lang('ACP_STICKYNOTES_CHECKUP_EXPLAIN') }}</p>
+
+<div class="sn-acp-summary {% if CHECK_ERRORS %}error{% elseif CHECK_WARNINGS %}warn{% else %}ok{% endif %}">
+	<span class="sn-acp-summary-icon">{% if CHECK_ERRORS %}&#10008;{% elseif CHECK_WARNINGS %}&#9888;{% else %}&#10004;{% endif %}</span>
+	<span>{{ CHECK_SUMMARY }}</span>
+</div>
+
+<table class="table1 zebra-table sn-acp-check">
+	<thead>
+		<tr>
+			<th>{{ lang('ACP_STICKYNOTES_CHECK_TEST') }}</th>
+			<th style="width: 110px;">{{ lang('ACP_STICKYNOTES_CHECK_RESULT') }}</th>
+			<th>{{ lang('ACP_STICKYNOTES_CHECK_DETAIL') }}</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for check in checks %}
+		<tr>
+			<td>{{ check.LABEL }}</td>
+			<td class="status {{ check.STATUS }}">{% if check.STATUS == 'ok' %}&#10004;{% elseif check.STATUS == 'warn' %}&#9888;{% elseif check.STATUS == 'info' %}&#8505;{% else %}&#10008;{% endif %} {{ check.STATUS_TXT }}</td>
+			<td>{{ check.DETAIL }}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+
+<form method="post" action="{{ U_ACTION }}">
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" value="{{ lang('ACP_STICKYNOTES_CHECK_AGAIN') }}" />
+	</fieldset>
+</form>
+
+{% INCLUDE 'acp_stickynotes_footer.html' %}
+{% INCLUDE 'overall_footer.html' %}

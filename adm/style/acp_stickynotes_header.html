@@ -1,0 +1,78 @@
+<style>
+.sn-acp-badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 18px; }
+.sn-acp-badge { display: inline-flex; align-items: stretch; border-radius: 4px; overflow: hidden; font-size: 11px; font-weight: bold; box-shadow: 0 1px 2px rgba(0,0,0,.15); }
+.sn-acp-badge span { padding: 4px 8px; color: #fff; }
+.sn-acp-badge .k { background: #555; }
+.sn-acp-badge .v { background: #d9534f; }
+.sn-acp-badge .v.php { background: #777bb3; }
+.sn-acp-badge .v.phpbb { background: #105289; }
+.sn-acp-badge .v.gpl { background: #3c8c40; }
+.sn-acp-badge .v.on { background: #3c8c40; }
+.sn-acp-badge .v.off { background: #a94442; }
+.sn-acp-credits { margin-top: 24px; padding-top: 10px; border-top: 1px solid #ccc; text-align: center; font-size: 11px; color: #666; }
+.sn-acp-dot { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: middle; margin-right: 4px; border: 1px solid rgba(0,0,0,.2); }
+.sn-acp-dot.yellow { background: #fff27a; } .sn-acp-dot.pink { background: #ffadd2; } .sn-acp-dot.blue { background: #a8dcfa; }
+.sn-acp-dot.green { background: #c4ee8c; } .sn-acp-dot.orange { background: #ffc77d; } .sn-acp-dot.purple { background: #d5c2fb; } .sn-acp-dot.white { background: #fbfaf6; }
+.sn-acp-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.sn-acp-stat { background: #fff8c4; border: 1px solid #ecd96a; border-radius: 4px; padding: 10px; text-align: center; transform: rotate(-1deg); }
+.sn-acp-stat:nth-child(even) { background: #dff1fb; border-color: #a8dcfa; transform: rotate(1deg); }
+.sn-acp-stat strong { display: block; font-size: 22px; }
+.sn-acp-progress { height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden; margin: 10px 0 6px; display: none; }
+.sn-acp-progress div { height: 100%; width: 0; background: linear-gradient(90deg, #f0ad4e, #d9534f); color: #fff; font-size: 11px; font-weight: bold; line-height: 20px; text-align: center; transition: width .25s; }
+.sn-acp-summary { display: flex; align-items: center; gap: 10px; margin: 10px 0 14px; padding: 12px 16px; border: 1px solid; border-left-width: 5px; border-radius: 4px; font-size: 1.15em; font-weight: bold; text-align: left; }
+.sn-acp-summary span { color: inherit !important; }
+.sn-acp-summary-icon { font-size: 1.3em; line-height: 1; }
+.sn-acp-summary.ok { background: #e6f4e3; border-color: #3c8c40; color: #1e5a22 !important; }
+.sn-acp-summary.warn { background: #fff4d6; border-color: #d39e00; color: #6b4e00 !important; }
+.sn-acp-summary.error { background: #fbe4e4; border-color: #a94442; color: #7a1c1a !important; }
+.sn-acp-section-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sn-acp-stats.small .sn-acp-stat strong { font-size: 18px; }
+.sn-acp-stat.alert { background: #fde8e7; border-color: #e6a8a6; }
+.sn-acp-stat a { text-decoration: none; color: inherit; display: block; }
+.sn-acp-colorbar { display: flex; height: 22px; border-radius: 11px; overflow: hidden; border: 1px solid #ccc; margin: 6px 0 8px; }
+.sn-acp-colorbar span { display: block; height: 100%; }
+.sn-acp-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 11px; }
+.sn-acp-filters { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: flex-end; margin-bottom: 10px; }
+.sn-acp-filters label { display: flex; flex-direction: column; gap: 3px; font-weight: bold; font-size: 11px; }
+.sn-acp-filters input[type=text], .sn-acp-filters select { min-width: 130px; }
+.sn-acp-list td { vertical-align: top; }
+.sn-acp-list .sn-acp-excerpt { color: #666; font-size: 11px; display: block; margin-top: 2px; }
+.sn-acp-tag { display: inline-block; padding: 1px 6px; margin: 1px 2px 1px 0; border-radius: 8px; font-size: 10px; font-weight: bold; background: #e9ecef; color: #444; white-space: nowrap; }
+.sn-acp-tag.expired { background: #fbe4e4; color: #8a1f1d; }
+.sn-acp-tag.future { background: #e6f4e3; color: #1e5a22; }
+.sn-acp-tag.recurring { background: #e3eefb; color: #1b4f8a; }
+.sn-acp-tag.snoozed { background: #fff4d6; color: #6b4e00; }
+.sn-acp-rowactions a { white-space: nowrap; margin-right: 8px; }
+.sn-acp-bulk { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 8px 0; }
+.sn-acp-view { padding: 12px 14px; border-radius: 3px; text-align: left; max-height: 60vh; overflow: auto; color: #2d2a26; }
+.sn-acp-view-meta { font-size: 11px; opacity: .7; margin-bottom: 8px; }
+.sn-acp-paper-yellow { background: #fff27a; } .sn-acp-paper-pink { background: #ffadd2; } .sn-acp-paper-blue { background: #a8dcfa; }
+.sn-acp-paper-green { background: #c4ee8c; } .sn-acp-paper-orange { background: #ffc77d; } .sn-acp-paper-purple { background: #d5c2fb; } .sn-acp-paper-white { background: #fbfaf6; }
+.sn-acp-tools td { vertical-align: middle; }
+.sn-acp-tools td.sn-acp-tool-desc strong { display: block; margin-bottom: 2px; }
+.sn-acp-tools td.sn-acp-tool-desc span { color: #666; }
+.sn-acp-tools .danger strong { color: #a94442; }
+.sn-acp-tools input[type=number] { width: 70px; }
+.sn-acp-runner { display: none; border: 1px solid #ccc; border-radius: 4px; padding: 10px 12px; margin-bottom: 12px; background: #fff; }
+.sn-acp-runner.active { display: block; }
+.sn-acp-runner .sn-acp-progress { display: block; }
+.sn-acp-runner.done { border-color: #3c8c40; background: #f3faf2; }
+.sn-acp-runner.error { border-color: #a94442; background: #fdf3f3; }
+.sn-acp-runner.error .sn-acp-runner-status { color: #a94442; font-weight: bold; }
+.sn-acp-runner-status { margin: 4px 0 0; }
+.sn-acp-progress.indeterminate div { width: 100% !important; background: repeating-linear-gradient(45deg, #f0ad4e 0 14px, #e8913a 14px 28px); background-size: 40px 40px; animation: sn-acp-stripes .8s linear infinite; }
+@keyframes sn-acp-stripes { from { background-position: 0 0; } to { background-position: 40px 0; } }
+.sn-acp-busy, input.sn-acp-busy { cursor: progress !important; opacity: .75; background-image: repeating-linear-gradient(45deg, rgba(0,0,0,.06) 0 6px, transparent 6px 12px) !important; animation: sn-acp-stripes 1s linear infinite; }
+.sn-acp-saved { display: none; margin-left: 10px; color: #3c8c40; font-weight: bold; }
+.sn-acp-check td.status { font-weight: bold; white-space: nowrap; }
+.sn-acp-check td.status.info { color: #1f6fb2; }
+.sn-acp-check .ok { color: #3c8c40; } .sn-acp-check .warn { color: #b8860b; } .sn-acp-check .error { color: #a94442; }
+</style>
+
+<div class="sn-acp-badges">
+	<span class="sn-acp-badge"><span class="k">{{ lang('ACP_STICKYNOTES_BADGE_EXT') }}</span><span class="v">v{{ STICKYNOTES_EXT_VERSION }}</span></span>
+	<span class="sn-acp-badge"><span class="k">PHP</span><span class="v php">{{ STICKYNOTES_PHP_VERSION }}</span></span>
+	<span class="sn-acp-badge"><span class="k">phpBB</span><span class="v phpbb">{{ STICKYNOTES_PHPBB_VERSION }}</span></span>
+	<span class="sn-acp-badge"><span class="k">{{ lang('ACP_STICKYNOTES_BADGE_LICENSE') }}</span><span class="v gpl">GPL-2.0</span></span>
+	<span class="sn-acp-badge"><span class="k">{{ lang('ACP_STICKYNOTES_BADGE_STATUS') }}</span>{% if S_STICKYNOTES_ENABLED %}<span class="v on">{{ lang('ACP_STICKYNOTES_BADGE_ON') }}</span>{% else %}<span class="v off">{{ lang('ACP_STICKYNOTES_BADGE_OFF') }}</span>{% endif %}</span>
+</div>

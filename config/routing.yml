@@ -1,0 +1,5 @@
+salvocortesiano_stickynotes_ajax:
+    path: /stickynotes/ajax/{action}
+    defaults: { _controller: salvocortesiano.stickynotes.controller.main:handle }
+    requirements:
+        action: '[a-z_]+'

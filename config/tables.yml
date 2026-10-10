@@ -1,0 +1,3 @@
+parameters:
+    salvocortesiano.stickynotes.tables.notes: '%core.table_prefix%stickynotes'
+    salvocortesiano.stickynotes.tables.shares: '%core.table_prefix%stickynotes_shares'

@@ -1,0 +1,188 @@
+{% INCLUDE 'overall_header.html' %}
+
+<h1>{{ lang('ACP_STICKYNOTES_MANAGEMENT') }}</h1>
+{% INCLUDE 'acp_stickynotes_header.html' %}
+<p>{{ lang('ACP_STICKYNOTES_MANAGEMENT_EXPLAIN') }}</p>
+
+{# ---------------- Statistics ---------------- #}
+<div class="sn-acp-stats">
+	<div class="sn-acp-stat"><a href="{{ U_SN_RESET_FILTERS }}"><strong>{{ STICKYNOTES_STAT_TOTAL }}</strong>{{ lang('ACP_STICKYNOTES_STAT_TOTAL') }}</a></div>
+	<div class="sn-acp-stat"><strong>{{ STICKYNOTES_STAT_USERS }}</strong>{{ lang('ACP_STICKYNOTES_STAT_USERS') }}</div>
+	<div class="sn-acp-stat"><a href="{{ U_ACTION }}&amp;sn_status=reminder_future#sn-list"><strong>{{ STICKYNOTES_STAT_REMINDERS }}</strong>{{ lang('ACP_STICKYNOTES_STAT_REMINDERS') }}</a></div>
+	<div class="sn-acp-stat{% if STICKYNOTES_STAT_EXPIRED %} alert{% endif %}"><a href="{{ U_ACTION }}&amp;sn_status=reminder_expired#sn-list"><strong>{{ STICKYNOTES_STAT_EXPIRED }}</strong>{{ lang('ACP_STICKYNOTES_STAT_EXPIRED') }}</a></div>
+	<div class="sn-acp-stat"><a href="{{ U_ACTION }}&amp;sn_status=reminder_recurring#sn-list"><strong>{{ STICKYNOTES_STAT_RECURRING }}</strong>{{ lang('ACP_STICKYNOTES_STAT_RECURRING') }}</a></div>
+	<div class="sn-acp-stat"><a href="{{ U_ACTION }}&amp;sn_status=shared#sn-list"><strong>{{ STICKYNOTES_STAT_SHARED }}</strong>{{ lang('ACP_STICKYNOTES_STAT_SHARED') }}</a></div>
+	<div class="sn-acp-stat"><a href="{{ U_ACTION }}&amp;sn_status=hidden#sn-list"><strong>{{ STICKYNOTES_STAT_HIDDEN }}</strong>{{ lang('ACP_STICKYNOTES_STAT_HIDDEN') }}</a></div>
+	<div class="sn-acp-stat"><a href="{{ U_ACTION }}&amp;sn_status=snoozed#sn-list"><strong>{{ STICKYNOTES_STAT_SNOOZED }}</strong>{{ lang('ACP_STICKYNOTES_STAT_SNOOZED') }}</a></div>
+</div>
+<div class="sn-acp-stats small">
+	<div class="sn-acp-stat"><a href="{{ U_ACTION }}&amp;sn_status=minimized#sn-list"><strong>{{ STICKYNOTES_STAT_MINIMIZED }}</strong>{{ lang('ACP_STICKYNOTES_STAT_MINIMIZED') }}</a></div>
+	<div class="sn-acp-stat"><a href="{{ U_ACTION }}&amp;sn_status=locked#sn-list"><strong>{{ STICKYNOTES_STAT_LOCKED }}</strong>{{ lang('ACP_STICKYNOTES_STAT_LOCKED') }}</a></div>
+	<div class="sn-acp-stat"><a href="{{ U_ACTION }}&amp;sn_status=bbcode#sn-list"><strong>{{ STICKYNOTES_STAT_BBCODE }}</strong>{{ lang('ACP_STICKYNOTES_STAT_BBCODE') }}</a></div>
+	<div class="sn-acp-stat"><a href="{{ U_ACTION }}&amp;sn_scope=page#sn-list"><strong>{{ STICKYNOTES_STAT_PAGE }}</strong>{{ lang('ACP_STICKYNOTES_STAT_PAGE') }}</a></div>
+	<div class="sn-acp-stat"><a href="{{ U_ACTION }}&amp;sn_status=empty#sn-list"><strong>{{ STICKYNOTES_STAT_EMPTY }}</strong>{{ lang('ACP_STICKYNOTES_STAT_EMPTY') }}</a></div>
+	<div class="sn-acp-stat"><strong>{{ STICKYNOTES_STAT_INACTIVE }}</strong>{{ lang('ACP_STICKYNOTES_STAT_INACTIVE') }}</div>
+	<div class="sn-acp-stat"><strong>{{ STICKYNOTES_STAT_NEW7 }}</strong>{{ lang('ACP_STICKYNOTES_STAT_NEW7') }}</div>
+	<div class="sn-acp-stat"><strong>{{ STICKYNOTES_STAT_NEW30 }}</strong>{{ lang('ACP_STICKYNOTES_STAT_NEW30') }}</div>
+</div>
+
+{% if STICKYNOTES_STAT_EXPIRED or STICKYNOTES_STAT_EMPTY %}
+<div class="sn-acp-summary warn">
+	<span class="sn-acp-summary-icon">&#9888;</span>
+	<span>{{ lang('ACP_STICKYNOTES_MAINT_HINT', STICKYNOTES_STAT_EXPIRED, STICKYNOTES_STAT_EMPTY) }} <a href="{{ U_STICKYNOTES_MAINT }}">{{ lang('ACP_STICKYNOTES_MAINTENANCE') }} &raquo;</a></span>
+</div>
+{% endif %}
+
+{% if colors|length %}
+<fieldset>
+	<legend>{{ lang('ACP_STICKYNOTES_COLORS') }}</legend>
+	<div class="sn-acp-colorbar">
+		{% for c in colors %}<span class="sn-acp-paper-{{ c.COLOR }}" style="width: {{ c.PERCENT }}%;" title="{{ c.NAME }}: {{ c.COUNT }} ({{ c.PERCENT }}%)"></span>{% endfor %}
+	</div>
+	<div class="sn-acp-legend">
+		{% for c in colors %}<span><span class="sn-acp-dot {{ c.COLOR }}"></span><a href="{{ U_ACTION }}&amp;sn_color={{ c.COLOR }}#sn-list">{{ c.NAME }}</a>: <strong>{{ c.COUNT }}</strong> ({{ c.PERCENT }}%)</span>{% endfor %}
+	</div>
+</fieldset>
+{% endif %}
+
+{# ---------------- List of every note ---------------- #}
+<fieldset id="sn-list">
+	<legend>{{ lang('ACP_STICKYNOTES_LIST') }}</legend>
+
+	<form id="sn_filters" name="sn_filters" method="get" action="{{ U_ACTION }}#sn-list" class="sn-acp-filters">
+		{{ S_SN_HIDDEN_FIELDS }}
+		<label>{{ lang('USERNAME') }}
+			<span><input type="text" name="sn_user" id="sn_user" value="{{ SN_FILTER_USER }}" class="inputbox autowidth" /> <a href="{{ U_SN_FIND_USER }}" onclick="find_username(this.href); return false;">{{ lang('FIND_USERNAME') }}</a></span>
+		</label>
+		<label>{{ lang('ACP_STICKYNOTES_FILTER_TEXT') }}
+			<input type="text" name="sn_q" value="{{ SN_FILTER_Q }}" class="inputbox autowidth" />
+		</label>
+		<label>{{ lang('STICKYNOTES_COLOR') }}
+			<select name="sn_color"><option value="">{{ lang('ACP_STICKYNOTES_FILTER_ANY') }}</option>{% for c in filter_colors %}<option value="{{ c.VALUE }}"{% if c.S_SELECTED %} selected="selected"{% endif %}>{{ c.LABEL }}</option>{% endfor %}</select>
+		</label>
+		<label>{{ lang('ACP_STICKYNOTES_FILTER_STATUS') }}
+			<select name="sn_status">{% for s in filter_status %}<option value="{{ s.VALUE }}"{% if s.S_SELECTED %} selected="selected"{% endif %}>{{ s.LABEL }}</option>{% endfor %}</select>
+		</label>
+		<label>{{ lang('STICKYNOTES_SCOPE') }}
+			<select name="sn_scope">
+				<option value="">{{ lang('ACP_STICKYNOTES_FILTER_ANY') }}</option>
+				<option value="global"{% if SN_FILTER_SCOPE == 'global' %} selected="selected"{% endif %}>{{ lang('STICKYNOTES_SCOPE_GLOBAL') }}</option>
+				<option value="page"{% if SN_FILTER_SCOPE == 'page' %} selected="selected"{% endif %}>{{ lang('STICKYNOTES_SCOPE_PAGE') }}</option>
+			</select>
+		</label>
+		<label>{{ lang('ACP_STICKYNOTES_SORT') }}
+			<span>
+				<select name="sn_sort">{% for s in filter_sorts %}<option value="{{ s.VALUE }}"{% if s.S_SELECTED %} selected="selected"{% endif %}>{{ s.LABEL }}</option>{% endfor %}</select>
+				<select name="sn_dir">
+					<option value="d"{% if SN_FILTER_DIR == 'd' %} selected="selected"{% endif %}>{{ lang('DESCENDING') }}</option>
+					<option value="a"{% if SN_FILTER_DIR == 'a' %} selected="selected"{% endif %}>{{ lang('ASCENDING') }}</option>
+				</select>
+			</span>
+		</label>
+		<span>
+			<input class="button1" type="submit" value="{{ lang('ACP_STICKYNOTES_FILTER_APPLY') }}" />
+			{% if S_SN_FILTERED %}<a href="{{ U_SN_RESET_FILTERS }}">{{ lang('ACP_STICKYNOTES_FILTER_RESET') }}</a>{% endif %}
+		</span>
+	</form>
+
+	<p><strong>{{ SN_LIST_TOTAL }}</strong></p>
+
+	{% if notes|length %}
+	<form id="sn_list_form" onsubmit="return false;">
+	<table class="table1 zebra-table sn-acp-list">
+		<thead>
+			<tr>
+				<th style="width: 24px;"><input type="checkbox" id="sn-check-all" title="{{ lang('MARK_ALL') }}" /></th>
+				<th>{{ lang('ACP_STICKYNOTES_COL_NOTE') }}</th>
+				<th>{{ lang('ACP_STICKYNOTES_COL_OWNER') }}</th>
+				<th>{{ lang('STICKYNOTES_SCOPE') }}</th>
+				<th>{{ lang('STICKYNOTES_REMINDER') }}</th>
+				<th>{{ lang('ACP_STICKYNOTES_COL_UPDATED') }}</th>
+				<th>{{ lang('ACTION') }}</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for note in notes %}
+			<tr>
+				<td><input type="checkbox" class="sn-check" value="{{ note.ID }}" /></td>
+				<td>
+					<span class="sn-acp-dot {{ note.COLOR }}" title="{{ note.COLOR_NAME }}"></span>
+					{% if note.S_UNTITLED %}<em>{{ note.TITLE }}</em>{% else %}<strong>{{ note.TITLE }}</strong>{% endif %}
+					{% if note.EXCERPT %}<span class="sn-acp-excerpt">{{ note.EXCERPT }}</span>{% endif %}
+					<div>
+						{% if note.S_HIDDEN %}<span class="sn-acp-tag">{{ lang('ACP_STICKYNOTES_TAG_HIDDEN') }}</span>{% endif %}
+						{% if note.S_SNOOZED %}<span class="sn-acp-tag snoozed" title="{{ note.SNOOZE }}">{{ lang('ACP_STICKYNOTES_TAG_SNOOZED') }}</span>{% endif %}
+						{% if note.S_MINIMIZED %}<span class="sn-acp-tag">{{ lang('ACP_STICKYNOTES_TAG_MINIMIZED') }}</span>{% endif %}
+						{% if note.S_LOCKED %}<span class="sn-acp-tag">{{ lang('ACP_STICKYNOTES_TAG_LOCKED') }}</span>{% endif %}
+						{% if note.S_BBCODE %}<span class="sn-acp-tag">BBCode</span>{% endif %}
+						{% if note.SHARES %}<span class="sn-acp-tag" title="{{ note.SHARES }}">{{ lang('ACP_STICKYNOTES_TAG_SHARED') }}</span>{% endif %}
+					</div>
+				</td>
+				<td>{{ note.OWNER }}</td>
+				<td>{{ note.SCOPE }}</td>
+				<td>
+					{% if note.REMINDER %}
+						{{ note.REMINDER }}<br />
+						<span class="sn-acp-tag {{ note.REMINDER_STATE }}">{% if note.REMINDER_STATE == 'expired' %}{{ lang('ACP_STICKYNOTES_TAG_EXPIRED') }}{% elseif note.REMINDER_STATE == 'recurring' %}{{ note.REPEAT }}{% else %}{{ lang('ACP_STICKYNOTES_TAG_FUTURE') }}{% endif %}</span>
+					{% else %}—{% endif %}
+				</td>
+				<td>{{ note.UPDATED }}<br /><small>{{ lang('ACP_STICKYNOTES_CREATED_ON', note.CREATED) }}</small></td>
+				<td class="sn-acp-rowactions">
+					<a href="#" class="sn-view" data-id="{{ note.ID }}">{{ lang('ACP_STICKYNOTES_VIEW') }}</a>
+					<a href="#" class="sn-delete-one" data-id="{{ note.ID }}">{{ lang('DELETE') }}</a>
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+
+	<div class="sn-acp-bulk">
+		<label for="sn-bulk-op">{{ lang('ACP_STICKYNOTES_BULK') ~ lang('COLON') }}</label>
+		<select id="sn-bulk-op">
+			<option value="delete">{{ lang('ACP_STICKYNOTES_BULK_DELETE') }}</option>
+			<option value="unset_reminder">{{ lang('ACP_STICKYNOTES_BULK_UNSET_REMINDER') }}</option>
+			<option value="wake">{{ lang('ACP_STICKYNOTES_BULK_WAKE') }}</option>
+			<option value="reset">{{ lang('ACP_STICKYNOTES_BULK_RESET') }}</option>
+		</select>
+		<input class="button2" type="button" id="sn-bulk-run" value="{{ lang('ACP_STICKYNOTES_BULK_RUN') }}" />
+	</div>
+	</form>
+
+	<div class="pagination">{% INCLUDE 'pagination.html' %}</div>
+	{% else %}
+	<p>{% if S_SN_FILTERED %}{{ lang('ACP_STICKYNOTES_NO_MATCH') }}{% else %}{{ lang('ACP_STICKYNOTES_NO_NOTES') }}{% endif %}</p>
+	{% endif %}
+</fieldset>
+
+{# ---------------- Top users ---------------- #}
+<fieldset>
+	<legend>{{ lang('ACP_STICKYNOTES_TOP_USERS') }}</legend>
+	{% if top_users|length %}
+	<table class="table1 zebra-table">
+		<thead><tr>
+			<th>{{ lang('USERNAME') }}</th>
+			<th>{{ lang('ACP_STICKYNOTES_STAT_TOTAL') }}</th>
+			<th>{{ lang('ACP_STICKYNOTES_STAT_EXPIRED') }}</th>
+			<th>{{ lang('ACP_STICKYNOTES_COL_LAST') }}</th>
+			<th>{{ lang('ACTION') }}</th>
+		</tr></thead>
+		<tbody>
+		{% for u in top_users %}<tr>
+			<td>{{ u.USERNAME }}</td>
+			<td>{{ u.TOTAL }}</td>
+			<td>{% if u.EXPIRED %}<span class="sn-acp-tag expired">{{ u.EXPIRED }}</span>{% else %}0{% endif %}</td>
+			<td>{{ u.LAST_UPDATE }}</td>
+			<td>{% if u.U_FILTER %}<a href="{{ u.U_FILTER }}">{{ lang('ACP_STICKYNOTES_SHOW_NOTES') }}</a>{% endif %}</td>
+		</tr>{% endfor %}
+		</tbody>
+	</table>
+	{% else %}
+	<p>{{ lang('ACP_STICKYNOTES_NO_NOTES') }}</p>
+	{% endif %}
+</fieldset>
+
+<script type="application/json" id="sn-acp-data">{{ STICKYNOTES_ACP_DATA }}</script>
+{% INCLUDEJS '@salvocortesiano_stickynotes/js/stickynotes_acp.js' %}
+
+{% INCLUDE 'acp_stickynotes_footer.html' %}
+{% INCLUDE 'overall_footer.html' %}

@@ -1,0 +1,88 @@
+{% INCLUDE 'ucp_header.html' %}
+
+<h2>{{ lang('UCP_STICKYNOTES_NOTES') }}</h2>
+
+<form id="ucp" method="post" action="{{ S_UCP_ACTION }}">
+<div class="panel">
+	<div class="inner">
+		<p>{{ lang('STICKYNOTES_UCP_NOTES_EXPLAIN') }}</p>
+		{% if not S_STICKYNOTES_ACTIVE %}<p class="error">{{ lang('STICKYNOTES_UCP_INACTIVE') }}</p>{% endif %}
+		<p><strong>{{ lang('STICKYNOTES_UCP_TOTAL') ~ lang('COLON') }}</strong> {{ STICKYNOTES_LIMIT }}</p>
+
+		{% if notes|length %}
+		<table class="table1 sn-ucp-table">
+			<thead>
+				<tr>
+					<th class="name">{{ lang('STICKYNOTES_UCP_NOTE') }}</th>
+					<th class="info">{{ lang('STICKYNOTES_SCOPE') }}</th>
+					<th class="info">{{ lang('STICKYNOTES_REMINDER') }}</th>
+					<th class="info">{{ lang('STICKYNOTES_SHARED_WITH') }}</th>
+					<th class="info">{{ lang('STICKYNOTES_UCP_UPDATED') }}</th>
+					<th class="mark">{{ lang('MARK') }}</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for note in notes %}
+				<tr class="{% if loop.index is odd %}bg1{% else %}bg2{% endif %}">
+					<td>
+						<span class="sn-ucp-dot sn-c-{{ note.COLOR }}" title="{{ note.COLOR_NAME }}"></span>
+						<a href="{{ note.U_VIEW }}"><strong>{{ note.TITLE }}</strong></a>
+						{% if note.S_HIDDEN %}<em class="sn-ucp-tag">{{ lang('STICKYNOTES_UCP_IN_TRAY') }}</em>{% endif %}
+						{% if note.S_LOCKED %}<em class="sn-ucp-tag">{{ lang('STICKYNOTES_LOCKED') }}</em>{% endif %}
+						{% if note.S_MINIMIZED %}<em class="sn-ucp-tag">{{ lang('STICKYNOTES_UCP_MINIMIZED') }}</em>{% endif %}
+						{% if note.SNOOZE %}<em class="sn-ucp-tag">{{ lang('STICKYNOTES_SNOOZE_UNTIL', note.SNOOZE) }}</em>{% endif %}
+						{% if note.EXCERPT %}<br /><span class="sn-ucp-excerpt">{{ note.EXCERPT }}</span>{% endif %}
+						<br /><a href="{{ note.U_DELETE }}" data-ajax="row_delete" class="sn-ucp-delete"><i class="icon fa-trash fa-fw" aria-hidden="true"></i>{{ lang('DELETE') }}</a>
+					</td>
+					<td>{{ note.SCOPE }}</td>
+					<td>{% if note.REMINDER %}{{ note.REMINDER }}{% if note.S_EXPIRED %} <em class="sn-ucp-tag sn-ucp-expired">{{ lang('STICKYNOTES_REMINDER_EXPIRED') }}</em>{% endif %}{% if note.REPEAT %}<br /><small>{{ note.REPEAT }}</small>{% endif %}{% else %}—{% endif %}</td>
+					<td>{% if note.SHARES %}{{ note.SHARES }}{% else %}—{% endif %}</td>
+					<td>{{ note.UPDATED }}</td>
+					<td class="mark"><input type="checkbox" name="mark[]" value="{{ note.ID }}" /></td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<p><strong>{{ lang('STICKYNOTES_EMPTY') }}</strong></p>
+		{% endif %}
+	</div>
+</div>
+
+{% if notes|length %}
+<fieldset class="display-actions">
+	<input type="submit" name="delete_marked" value="{{ lang('DELETE_MARKED') }}" class="button2" />
+	<div><a href="#" onclick="marklist('ucp', 'mark', true); return false;">{{ lang('MARK_ALL') }}</a> &bull; <a href="#" onclick="marklist('ucp', 'mark', false); return false;">{{ lang('UNMARK_ALL') }}</a></div>
+</fieldset>
+{% endif %}
+</form>
+
+<h3>{{ lang('STICKYNOTES_TAB_SHARED') }}</h3>
+<div class="panel">
+	<div class="inner">
+	{% if shared|length %}
+		<ul class="sn-ucp-shared">
+		{% for note in shared %}
+			<li><span class="sn-ucp-dot sn-c-{{ note.COLOR }}"></span><a href="{{ note.U_VIEW }}">{{ note.TITLE }}</a> — {{ lang('STICKYNOTES_SHARED_BY', note.OWNER) }} <small>({{ note.UPDATED }})</small></li>
+		{% endfor %}
+		</ul>
+	{% else %}
+		<p>{{ lang('STICKYNOTES_EMPTY_SHARED') }}</p>
+	{% endif %}
+	</div>
+</div>
+
+<style>
+.sn-ucp-dot.sn-c-yellow { --sn-paper: #fff27a; } .sn-ucp-dot.sn-c-pink { --sn-paper: #ffadd2; } .sn-ucp-dot.sn-c-blue { --sn-paper: #a8dcfa; }
+.sn-ucp-dot.sn-c-green { --sn-paper: #c4ee8c; } .sn-ucp-dot.sn-c-orange { --sn-paper: #ffc77d; } .sn-ucp-dot.sn-c-purple { --sn-paper: #d5c2fb; } .sn-ucp-dot.sn-c-white { --sn-paper: #fbfaf6; }
+.sn-ucp-dot { display: inline-block; width: 13px; height: 13px; border-radius: 2px; vertical-align: middle; margin-right: 4px; background: var(--sn-paper); box-shadow: inset 0 0 0 1px rgba(0,0,0,.2); transform: rotate(-6deg); }
+.sn-ucp-tag { font-size: 0.9em; color: #8a6d3b; margin-left: 4px; }
+.sn-ucp-expired { color: #a94442; font-weight: bold; }
+.sn-ucp-excerpt { color: #666; font-size: 0.95em; }
+.sn-ucp-delete { font-size: 0.9em; }
+.sn-ucp-table td { vertical-align: top; }
+.sn-ucp-shared { list-style: none; margin: 0; padding: 0; }
+.sn-ucp-shared li { padding: 4px 0; }
+</style>
+
+{% INCLUDE 'ucp_footer.html' %}

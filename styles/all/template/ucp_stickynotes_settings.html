@@ -1,0 +1,65 @@
+{% INCLUDE 'ucp_header.html' %}
+
+<h2>{{ lang('UCP_STICKYNOTES_SETTINGS') }}</h2>
+
+<form id="ucp" method="post" action="{{ S_UCP_ACTION }}">
+<div class="panel">
+	<div class="inner">
+		<p>{{ lang('STICKYNOTES_UCP_SETTINGS_EXPLAIN') }}</p>
+		<fieldset>
+			<dl>
+				<dt><label for="user_stickynotes_enabled">{{ lang('STICKYNOTES_UCP_ENABLE') ~ lang('COLON') }}</label><br /><span>{{ lang('STICKYNOTES_UCP_ENABLE_EXPLAIN') }}</span></dt>
+				<dd>
+					<label><input type="radio" name="user_stickynotes_enabled" id="user_stickynotes_enabled" value="1"{% if S_STICKYNOTES_ENABLED %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+					<label><input type="radio" name="user_stickynotes_enabled" value="0"{% if not S_STICKYNOTES_ENABLED %} checked="checked"{% endif %} /> {{ lang('NO') }}</label>
+				</dd>
+			</dl>
+			{% if S_STICKYNOTES_TRAY_USER %}
+			<dl>
+				<dt><label for="user_stickynotes_tray">{{ lang('STICKYNOTES_UCP_TRAY') ~ lang('COLON') }}</label><br /><span>{{ lang('STICKYNOTES_UCP_TRAY_EXPLAIN') }}</span></dt>
+				<dd><select name="user_stickynotes_tray" id="user_stickynotes_tray">
+					{% for pos in tray_positions %}<option value="{{ pos.VALUE }}"{% if pos.S_SELECTED %} selected="selected"{% endif %}>{{ pos.LABEL }}</option>{% endfor %}
+				</select></dd>
+			</dl>
+			{% endif %}
+			{% if S_STICKYNOTES_REMINDERS %}
+			<dl>
+				<dt><label for="user_stickynotes_notify">{{ lang('STICKYNOTES_UCP_NOTIFY') ~ lang('COLON') }}</label><br /><span>{{ lang('STICKYNOTES_UCP_NOTIFY_EXPLAIN') }}</span></dt>
+				<dd><select name="user_stickynotes_notify" id="user_stickynotes_notify">
+					<option value="0"{% if STICKYNOTES_NOTIFY == 0 %} selected="selected"{% endif %}>{{ lang('STICKYNOTES_UCP_NOTIFY_POPUP') }}</option>
+					<option value="1"{% if STICKYNOTES_NOTIFY == 1 %} selected="selected"{% endif %}>{{ lang('STICKYNOTES_UCP_NOTIFY_BELL') }}</option>
+					<option value="2"{% if STICKYNOTES_NOTIFY == 2 %} selected="selected"{% endif %}>{{ lang('STICKYNOTES_UCP_NOTIFY_BOTH') }}</option>
+				</select></dd>
+			</dl>
+			{% else %}
+			<input type="hidden" name="user_stickynotes_notify" value="{{ STICKYNOTES_NOTIFY }}" />
+			{% endif %}
+			{% if S_STICKYNOTES_WEBPUSH and S_STICKYNOTES_REMINDERS %}
+			<dl>
+				<dt><label for="user_stickynotes_push">{{ lang('STICKYNOTES_UCP_PUSH') ~ lang('COLON') }}</label><br /><span>{{ lang('STICKYNOTES_UCP_PUSH_EXPLAIN') }}</span></dt>
+				<dd>
+					<label><input type="radio" name="user_stickynotes_push" id="user_stickynotes_push" value="1"{% if S_STICKYNOTES_PUSH_ON %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+					<label><input type="radio" name="user_stickynotes_push" value="0"{% if not S_STICKYNOTES_PUSH_ON %} checked="checked"{% endif %} /> {{ lang('NO') }}</label>
+					<input type="hidden" name="stickynotes_push_sent" value="1" />
+					<br /><span class="sn-ucp-push-status{% if not S_STICKYNOTES_PUSH_DEVICE %} sn-ucp-push-warn{% endif %}">{{ STICKYNOTES_PUSH_DEVICES }}</span>
+					{% if not S_STICKYNOTES_PUSH_DEVICE %}<br /><a href="{{ U_STICKYNOTES_PUSH_DEVICE }}">{{ lang('STICKYNOTES_UCP_PUSH_DEVICE_LINK') }}</a>{% endif %}
+				</dd>
+			</dl>
+			{% endif %}
+		</fieldset>
+	</div>
+</div>
+
+<fieldset class="submit-buttons">
+	<input type="reset" value="{{ lang('RESET') }}" name="reset" class="button2" />&nbsp;
+	<input type="submit" name="submit" value="{{ lang('SUBMIT') }}" class="button1" />
+	{{ S_FORM_TOKEN }}
+</fieldset>
+</form>
+
+<style>
+.sn-ucp-push-status { font-size: 0.95em; color: #3c763d; }
+.sn-ucp-push-status.sn-ucp-push-warn { color: #8a6d3b; }
+</style>
+
+{% INCLUDE 'ucp_footer.html' %}

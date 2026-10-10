@@ -1,0 +1,152 @@
+imports:
+    - { resource: tables.yml }
+
+services:
+    salvocortesiano.stickynotes.note_manager:
+        class: salvocortesiano\stickynotes\service\note_manager
+        arguments:
+            - '@dbal.conn'
+            - '@config'
+            - '@user'
+            - '@auth'
+            - '@notification_manager'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%salvocortesiano.stickynotes.tables.notes%'
+            - '%salvocortesiano.stickynotes.tables.shares%'
+
+    salvocortesiano.stickynotes.controller.main:
+        class: salvocortesiano\stickynotes\controller\main_controller
+        arguments:
+            - '@config'
+            - '@user'
+            - '@auth'
+            - '@request'
+            - '@language'
+            - '@salvocortesiano.stickynotes.note_manager'
+
+    salvocortesiano.stickynotes.controller.acp:
+        class: salvocortesiano\stickynotes\controller\acp_controller
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '@dbal.tools'
+            - '@language'
+            - '@log'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@ext.manager'
+            - '@routing.helper'
+            - '@salvocortesiano.stickynotes.note_manager'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%core.table_prefix%'
+            - '%salvocortesiano.stickynotes.tables.notes%'
+            - '%salvocortesiano.stickynotes.tables.shares%'
+            - '@salvocortesiano.stickynotes.webpush'
+
+    salvocortesiano.stickynotes.maintenance:
+        class: salvocortesiano\stickynotes\service\maintenance
+        arguments:
+            - '@dbal.conn'
+            - '@config'
+            - '@notification_manager'
+            - '@salvocortesiano.stickynotes.note_manager'
+            - '%salvocortesiano.stickynotes.tables.notes%'
+            - '%salvocortesiano.stickynotes.tables.shares%'
+
+    salvocortesiano.stickynotes.controller.acp_manage:
+        class: salvocortesiano\stickynotes\controller\acp_manage_controller
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '@language'
+            - '@log'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@pagination'
+            - '@salvocortesiano.stickynotes.note_manager'
+            - '@salvocortesiano.stickynotes.maintenance'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%salvocortesiano.stickynotes.tables.notes%'
+            - '%salvocortesiano.stickynotes.tables.shares%'
+
+    salvocortesiano.stickynotes.webpush:
+        class: salvocortesiano\stickynotes\service\webpush
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '@ext.manager'
+            - '@notification_manager'
+            - '%core.table_prefix%'
+
+    salvocortesiano.stickynotes.controller.ucp:
+        class: salvocortesiano\stickynotes\controller\ucp_controller
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@auth'
+            - '@salvocortesiano.stickynotes.note_manager'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '@salvocortesiano.stickynotes.webpush'
+
+    salvocortesiano.stickynotes.listener:
+        class: salvocortesiano\stickynotes\event\main_listener
+        arguments:
+            - '@config'
+            - '@user'
+            - '@auth'
+            - '@template'
+            - '@language'
+            - '@request'
+            - '@controller.helper'
+            - '@salvocortesiano.stickynotes.note_manager'
+        tags:
+            - { name: event.listener }
+
+    salvocortesiano.stickynotes.cron.task.reminders:
+        class: salvocortesiano\stickynotes\cron\task\reminders
+        arguments:
+            - '@config'
+            - '@salvocortesiano.stickynotes.note_manager'
+        calls:
+            - [set_name, [cron.task.salvocortesiano.stickynotes.reminders]]
+        tags:
+            - { name: cron.task }
+
+    salvocortesiano.stickynotes.cron.task.cleanup:
+        class: salvocortesiano\stickynotes\cron\task\cleanup
+        arguments:
+            - '@config'
+            - '@log'
+            - '@salvocortesiano.stickynotes.maintenance'
+        calls:
+            - [set_name, [cron.task.salvocortesiano.stickynotes.cleanup]]
+        tags:
+            - { name: cron.task }
+
+    salvocortesiano.stickynotes.notification.type.reminder:
+        class: salvocortesiano\stickynotes\notification\type\reminder
+        shared: false
+        parent: notification.type.base
+        calls:
+            - [set_user_loader, ['@user_loader']]
+        tags:
+            - { name: notification.type }
+
+    salvocortesiano.stickynotes.notification.type.shared:
+        class: salvocortesiano\stickynotes\notification\type\shared
+        shared: false
+        parent: notification.type.base
+        calls:
+            - [set_user_loader, ['@user_loader']]
+        tags:
+            - { name: notification.type }

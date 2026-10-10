@@ -1,0 +1,100 @@
+{% INCLUDE 'overall_header.html' %}
+
+<h1>{{ lang('ACP_STICKYNOTES_SETTINGS') }}</h1>
+{% INCLUDE 'acp_stickynotes_header.html' %}
+<p>{{ lang('ACP_STICKYNOTES_SETTINGS_EXPLAIN') }}</p>
+
+<form id="stickynotes_settings" method="post" action="{{ U_ACTION }}">
+	<fieldset>
+		<legend>{{ lang('ACP_STICKYNOTES_GENERAL') }}</legend>
+		<dl>
+			<dt><label for="stickynotes_enabled">{{ lang('ACP_STICKYNOTES_ENABLED') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_ENABLED_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="stickynotes_enabled" name="stickynotes_enabled" value="1"{% if STICKYNOTES_ENABLED %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="stickynotes_enabled" value="0"{% if not STICKYNOTES_ENABLED %} checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="stickynotes_max_notes">{{ lang('ACP_STICKYNOTES_MAX_NOTES') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_MAX_NOTES_EXPLAIN') }}</span></dt>
+			<dd><input type="number" id="stickynotes_max_notes" name="stickynotes_max_notes" min="0" max="9999" value="{{ STICKYNOTES_MAX_NOTES }}" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="stickynotes_max_chars">{{ lang('ACP_STICKYNOTES_MAX_CHARS') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_MAX_CHARS_EXPLAIN') }}</span></dt>
+			<dd><input type="number" id="stickynotes_max_chars" name="stickynotes_max_chars" min="0" max="65000" value="{{ STICKYNOTES_MAX_CHARS }}" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="stickynotes_default_color">{{ lang('ACP_STICKYNOTES_DEFAULT_COLOR') ~ lang('COLON') }}</label></dt>
+			<dd><select id="stickynotes_default_color" name="stickynotes_default_color">
+				{% for color in colors %}<option value="{{ color.VALUE }}"{% if color.S_SELECTED %} selected="selected"{% endif %}>{{ color.LABEL }}</option>{% endfor %}
+			</select></dd>
+		</dl>
+		<dl>
+			<dt><label for="stickynotes_rotation">{{ lang('ACP_STICKYNOTES_ROTATION') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_ROTATION_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="stickynotes_rotation" name="stickynotes_rotation" value="1"{% if STICKYNOTES_ROTATION %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="stickynotes_rotation" value="0"{% if not STICKYNOTES_ROTATION %} checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ lang('ACP_STICKYNOTES_TRAY') }}</legend>
+		<dl>
+			<dt><label for="stickynotes_tray_pos">{{ lang('ACP_STICKYNOTES_TRAY_POS') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_TRAY_POS_EXPLAIN') }}</span></dt>
+			<dd><select id="stickynotes_tray_pos" name="stickynotes_tray_pos">
+				{% for pos in tray_positions %}<option value="{{ pos.VALUE }}"{% if pos.S_SELECTED %} selected="selected"{% endif %}>{{ pos.LABEL }}</option>{% endfor %}
+			</select></dd>
+		</dl>
+		<dl>
+			<dt><label for="stickynotes_tray_user">{{ lang('ACP_STICKYNOTES_TRAY_USER') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_TRAY_USER_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="stickynotes_tray_user" name="stickynotes_tray_user" value="1"{% if STICKYNOTES_TRAY_USER %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="stickynotes_tray_user" value="0"{% if not STICKYNOTES_TRAY_USER %} checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="stickynotes_trash">{{ lang('ACP_STICKYNOTES_TRASH') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_TRASH_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="stickynotes_trash" name="stickynotes_trash" value="1"{% if STICKYNOTES_TRASH %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="stickynotes_trash" value="0"{% if not STICKYNOTES_TRASH %} checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="stickynotes_trash_pos">{{ lang('ACP_STICKYNOTES_TRASH_POS') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_TRASH_POS_EXPLAIN') }}</span></dt>
+			<dd><select id="stickynotes_trash_pos" name="stickynotes_trash_pos">
+				<option value="above"{% if STICKYNOTES_TRASH_POS != 'side' %} selected="selected"{% endif %}>{{ lang('ACP_STICKYNOTES_TRASH_ABOVE') }}</option>
+				<option value="side"{% if STICKYNOTES_TRASH_POS == 'side' %} selected="selected"{% endif %}>{{ lang('ACP_STICKYNOTES_TRASH_SIDE') }}</option>
+			</select></dd>
+		</dl>
+		<dl>
+			<dt><label for="stickynotes_mobile_mode">{{ lang('ACP_STICKYNOTES_MOBILE') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_MOBILE_EXPLAIN') }}</span></dt>
+			<dd><select id="stickynotes_mobile_mode" name="stickynotes_mobile_mode">
+				<option value="0"{% if STICKYNOTES_MOBILE_MODE == 0 %} selected="selected"{% endif %}>{{ lang('ACP_STICKYNOTES_MOBILE_FULL') }}</option>
+				<option value="1"{% if STICKYNOTES_MOBILE_MODE == 1 %} selected="selected"{% endif %}>{{ lang('ACP_STICKYNOTES_MOBILE_TRAY') }}</option>
+				<option value="2"{% if STICKYNOTES_MOBILE_MODE == 2 %} selected="selected"{% endif %}>{{ lang('ACP_STICKYNOTES_MOBILE_OFF') }}</option>
+			</select></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ lang('ACP_STICKYNOTES_FEATURES') }}</legend>
+		<dl>
+			<dt><label for="stickynotes_allow_bbcode">{{ lang('ACP_STICKYNOTES_ALLOW_BBCODE') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_ALLOW_BBCODE_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="stickynotes_allow_bbcode" name="stickynotes_allow_bbcode" value="1"{% if STICKYNOTES_ALLOW_BBCODE %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="stickynotes_allow_bbcode" value="0"{% if not STICKYNOTES_ALLOW_BBCODE %} checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="stickynotes_allow_reminder">{{ lang('ACP_STICKYNOTES_ALLOW_REMINDER') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_ALLOW_REMINDER_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="stickynotes_allow_reminder" name="stickynotes_allow_reminder" value="1"{% if STICKYNOTES_ALLOW_REMINDER %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="stickynotes_allow_reminder" value="0"{% if not STICKYNOTES_ALLOW_REMINDER %} checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="stickynotes_allow_share">{{ lang('ACP_STICKYNOTES_ALLOW_SHARE') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_ALLOW_SHARE_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="stickynotes_allow_share" name="stickynotes_allow_share" value="1"{% if STICKYNOTES_ALLOW_SHARE %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="stickynotes_allow_share" value="0"{% if not STICKYNOTES_ALLOW_SHARE %} checked="checked"{% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+	</fieldset>
+
+	<p class="explain">{{ lang('ACP_STICKYNOTES_PERMISSIONS_HINT') }}</p>
+
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+		{{ S_FORM_TOKEN }}
+	</fieldset>
+</form>
+
+{% INCLUDE 'acp_stickynotes_footer.html' %}
+{% INCLUDE 'overall_footer.html' %}

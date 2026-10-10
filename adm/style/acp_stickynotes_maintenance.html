@@ -1,0 +1,121 @@
+{% INCLUDE 'overall_header.html' %}
+
+<h1>{{ lang('ACP_STICKYNOTES_MAINTENANCE') }}</h1>
+{% INCLUDE 'acp_stickynotes_header.html' %}
+<p>{{ lang('ACP_STICKYNOTES_MAINTENANCE_EXPLAIN') }}</p>
+
+<div class="sn-acp-stats small">
+	<div class="sn-acp-stat"><strong>{{ STICKYNOTES_STAT_TOTAL }}</strong>{{ lang('ACP_STICKYNOTES_STAT_TOTAL') }}</div>
+	<div class="sn-acp-stat{% if STICKYNOTES_STAT_EXPIRED %} alert{% endif %}"><strong>{{ STICKYNOTES_STAT_EXPIRED }}</strong>{{ lang('ACP_STICKYNOTES_STAT_EXPIRED') }}</div>
+	<div class="sn-acp-stat"><strong>{{ STICKYNOTES_STAT_INACTIVE }}</strong>{{ lang('ACP_STICKYNOTES_STAT_INACTIVE') }}</div>
+	<div class="sn-acp-stat"><strong>{{ STICKYNOTES_STAT_EMPTY }}</strong>{{ lang('ACP_STICKYNOTES_STAT_EMPTY') }}</div>
+</div>
+
+{# ---------------- Manual tools ---------------- #}
+<fieldset>
+	<legend>{{ lang('ACP_STICKYNOTES_TOOLS') }}</legend>
+	<p>{{ lang('ACP_STICKYNOTES_TOOLS_EXPLAIN') }}</p>
+
+<div class="sn-acp-runner" id="sn-runner" aria-live="polite">
+		<strong class="sn-acp-runner-title"></strong>
+		<div class="sn-acp-progress"><div></div></div>
+		<p class="sn-acp-runner-status"></p>
+	</div>
+
+	<form id="sn_maint" name="sn_maint" onsubmit="return false;">
+	<table class="table1 zebra-table sn-acp-tools">
+		<thead><tr>
+			<th>{{ lang('ACP_STICKYNOTES_TOOL') }}</th>
+			<th style="width: 32%;">{{ lang('ACP_STICKYNOTES_TOOL_OPTIONS') }}</th>
+			<th style="width: 120px;">{{ lang('ACTION') }}</th>
+		</tr></thead>
+		<tbody>
+			<tr>
+				<td class="sn-acp-tool-desc"><strong>{{ lang('ACP_STICKYNOTES_TASK_EXPIRED_DELETE') }}</strong><span>{{ lang('ACP_STICKYNOTES_TASK_EXPIRED_DELETE_EXPLAIN') }}</span></td>
+				<td><label>{{ lang('ACP_STICKYNOTES_OLDER_THAN') }} <input type="number" min="0" max="3650" value="0" data-param="days" /> {{ lang('ACP_STICKYNOTES_DAYS') }}</label></td>
+				<td><input class="button2 sn-run" type="button" data-task="expired_delete" value="{{ lang('ACP_STICKYNOTES_RUN') }}" /></td>
+			</tr>
+			<tr>
+				<td class="sn-acp-tool-desc"><strong>{{ lang('ACP_STICKYNOTES_TASK_EXPIRED_UNSET') }}</strong><span>{{ lang('ACP_STICKYNOTES_TASK_EXPIRED_UNSET_EXPLAIN') }}</span></td>
+				<td><label>{{ lang('ACP_STICKYNOTES_OLDER_THAN') }} <input type="number" min="0" max="3650" value="0" data-param="days" /> {{ lang('ACP_STICKYNOTES_DAYS') }}</label></td>
+				<td><input class="button2 sn-run" type="button" data-task="expired_unset" value="{{ lang('ACP_STICKYNOTES_RUN') }}" /></td>
+			</tr>
+			<tr>
+				<td class="sn-acp-tool-desc"><strong>{{ lang('ACP_STICKYNOTES_TASK_INACTIVE') }}</strong><span>{{ lang('ACP_STICKYNOTES_TASK_INACTIVE_EXPLAIN') }}</span></td>
+				<td><label>{{ lang('ACP_STICKYNOTES_NOT_CHANGED_FOR') }} <input type="number" min="1" max="3650" value="180" data-param="days" /> {{ lang('ACP_STICKYNOTES_DAYS') }}</label></td>
+				<td><input class="button2 sn-run" type="button" data-task="inactive" value="{{ lang('ACP_STICKYNOTES_RUN') }}" /></td>
+			</tr>
+			<tr>
+				<td class="sn-acp-tool-desc"><strong>{{ lang('ACP_STICKYNOTES_TASK_EMPTY') }}</strong><span>{{ lang('ACP_STICKYNOTES_TASK_EMPTY_EXPLAIN') }}</span></td>
+				<td>—</td>
+				<td><input class="button2 sn-run" type="button" data-task="empty" value="{{ lang('ACP_STICKYNOTES_RUN') }}" /></td>
+			</tr>
+			<tr>
+				<td class="sn-acp-tool-desc"><strong>{{ lang('ACP_STICKYNOTES_TASK_USER') }}</strong><span>{{ lang('ACP_STICKYNOTES_TASK_USER_EXPLAIN') }}</span></td>
+				<td><input type="text" id="sn_maint_user" name="sn_maint_user" class="inputbox autowidth" data-param="username" maxlength="255" />
+					<a href="{{ U_SN_FIND_USER }}" onclick="find_username(this.href); return false;">{{ lang('FIND_USERNAME') }}</a></td>
+				<td><input class="button2 sn-run" type="button" data-task="user" value="{{ lang('ACP_STICKYNOTES_RUN') }}" /></td>
+			</tr>
+			<tr>
+				<td class="sn-acp-tool-desc"><strong>{{ lang('ACP_STICKYNOTES_TASK_ORPHANS') }}</strong><span>{{ lang('ACP_STICKYNOTES_TASK_ORPHANS_EXPLAIN') }}</span></td>
+				<td>—</td>
+				<td><input class="button2 sn-run" type="button" data-task="orphans" value="{{ lang('ACP_STICKYNOTES_RUN') }}" /></td>
+			</tr>
+			<tr>
+				<td class="sn-acp-tool-desc"><strong>{{ lang('ACP_STICKYNOTES_TASK_RESET') }}</strong><span>{{ lang('ACP_STICKYNOTES_TASK_RESET_EXPLAIN') }}</span></td>
+				<td>—</td>
+				<td><input class="button2 sn-run" type="button" data-task="reset" value="{{ lang('ACP_STICKYNOTES_RUN') }}" /></td>
+			</tr>
+			<tr class="danger">
+				<td class="sn-acp-tool-desc"><strong>{{ lang('ACP_STICKYNOTES_TASK_ALL') }}</strong><span>{{ lang('ACP_STICKYNOTES_TASK_ALL_EXPLAIN') }}</span></td>
+				<td>—</td>
+				<td><input class="button2 sn-run" type="button" data-task="all" value="{{ lang('ACP_STICKYNOTES_RUN') }}" /></td>
+			</tr>
+		</tbody>
+	</table>
+	</form>
+</fieldset>
+
+{# ---------------- Automatic cleanup ---------------- #}
+<form id="sn_auto" method="post" action="{{ U_ACTION }}">
+<fieldset>
+	<legend>{{ lang('ACP_STICKYNOTES_AUTO') }}</legend>
+	<p>{{ lang('ACP_STICKYNOTES_AUTO_EXPLAIN') }}</p>
+	<div id="sn-auto-status" class="sn-acp-summary {% if S_STICKYNOTES_AUTO_ON %}ok{% else %}warn{% endif %}">
+		<span class="sn-acp-summary-icon">{% if S_STICKYNOTES_AUTO_ON %}&#10004;{% else %}&#9888;{% endif %}</span>
+		<span class="sn-acp-summary-text">{{ STICKYNOTES_AUTO_STATUS }}</span>
+	</div>
+	<div class="sn-acp-runner" id="sn-auto-runner" aria-live="polite">
+		<strong class="sn-acp-runner-title"></strong>
+		<div class="sn-acp-progress"><div></div></div>
+		<p class="sn-acp-runner-status"></p>
+	</div>
+	<dl>
+		<dt><label for="stickynotes_auto_expired_days">{{ lang('ACP_STICKYNOTES_AUTO_EXPIRED') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_AUTO_EXPIRED_EXPLAIN') }}</span></dt>
+		<dd><input type="number" id="stickynotes_auto_expired_days" name="stickynotes_auto_expired_days" min="0" max="3650" value="{{ STICKYNOTES_AUTO_EXPIRED_DAYS }}" /> {{ lang('ACP_STICKYNOTES_DAYS') }}</dd>
+	</dl>
+	<dl>
+		<dt><label for="stickynotes_auto_inactive_days">{{ lang('ACP_STICKYNOTES_AUTO_INACTIVE') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_STICKYNOTES_AUTO_INACTIVE_EXPLAIN') }}</span></dt>
+		<dd><input type="number" id="stickynotes_auto_inactive_days" name="stickynotes_auto_inactive_days" min="0" max="3650" value="{{ STICKYNOTES_AUTO_INACTIVE_DAYS }}" /> {{ lang('ACP_STICKYNOTES_DAYS') }}</dd>
+	</dl>
+	<p class="submit-buttons">
+		<input class="button1" type="submit" id="sn-auto-save" name="submit_auto" value="{{ lang('ACP_STICKYNOTES_AUTO_SAVE') }}" />&nbsp;
+		<input class="button2" type="button" id="sn-auto-run" value="{{ lang('ACP_STICKYNOTES_AUTO_RUN') }}" />
+		<span id="sn-auto-saved" class="sn-acp-saved"></span>
+		{{ S_FORM_TOKEN }}
+	</p>
+</fieldset>
+</form>
+
+{# ---------------- Export ---------------- #}
+<fieldset>
+	<legend>{{ lang('ACP_STICKYNOTES_EXPORT') }}</legend>
+	<p>{{ lang('ACP_STICKYNOTES_EXPORT_EXPLAIN') }}</p>
+	<p><a class="button2" id="sn-export" href="{{ U_STICKYNOTES_EXPORT }}">{{ lang('ACP_STICKYNOTES_EXPORT_RUN') }}</a></p>
+</fieldset>
+
+<script type="application/json" id="sn-acp-data">{{ STICKYNOTES_ACP_DATA }}</script>
+{% INCLUDEJS '@salvocortesiano_stickynotes/js/stickynotes_acp.js' %}
+
+{% INCLUDE 'acp_stickynotes_footer.html' %}
+{% INCLUDE 'overall_footer.html' %}
