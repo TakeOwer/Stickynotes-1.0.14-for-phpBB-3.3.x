@@ -1,11 +1,11 @@
 # Sticky Notes for phpBB
 
-![Version](https://img.shields.io/badge/version-1.0.14-105080)
+![Version](https://img.shields.io/badge/version-1.0.15-105080)
 ![phpBB](https://img.shields.io/badge/phpBB-3.3.x-377a33)
 ![PHP](https://img.shields.io/badge/PHP-%3E%3D7.4-377a33)
 ![License](https://img.shields.io/badge/license-GPL--2.0--only-7f7f7f)
 
-**Extension:** `salvocortesiano/stickynotes` · **Version:** 1.0.14
+**Extension:** `salvocortesiano/stickynotes` · **Version:** 1.0.15
 **Requirements:** phpBB 3.3.x (tested on 3.3.19), PHP 7.4 or higher
 **License:** [GPL-2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) · **Author:** Salvo Cortesiano — [Le Ombre della Rete 360°](https://netshadows.de/ombra)
 
