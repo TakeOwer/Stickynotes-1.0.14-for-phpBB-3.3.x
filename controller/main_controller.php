@@ -75,6 +75,9 @@ class main_controller
 
 		$user_id = (int) $this->user->data['user_id'];
 
+		// notifications for other users go out after the answer (kernel.terminate)
+		$this->manager->set_defer_notifications(true);
+
 		switch ($action)
 		{
 			case 'create':

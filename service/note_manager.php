@@ -724,6 +724,70 @@ class note_manager
 	 * @param array  $group_ids  Group ids (only groups the owner belongs to)
 	 * @return array ['added' => int[], 'missing' => string[]]
 	 */
+	/** @var bool Send notifications only after the AJAX answer has gone out */
+	protected $defer_notifications = false;
+
+	/** @var array Notifications waiting for kernel.terminate */
+	protected $deferred_notifications = [];
+
+	public function set_defer_notifications($defer)
+	{
+		$this->defer_notifications = (bool) $defer;
+	}
+
+	/**
+	 * Send phpBB notifications without ever breaking the current request:
+	 * the notification methods (e-mail, Web Push to Google/Microsoft/Mozilla
+	 * servers…) may be slow, print notices or throw. Any output is discarded
+	 * and any error is caught.
+	 */
+	public function send_notifications($type, array $data, $allow_defer = true)
+	{
+		if ($allow_defer && $this->defer_notifications)
+		{
+			$this->deferred_notifications[] = [$type, $data];
+			return;
+		}
+
+		$level = ob_get_level();
+		ob_start();
+		try
+		{
+			$this->notification_manager->add_notifications($type, $data);
+		}
+		catch (\Throwable $e)
+		{
+			// Notifications are best effort
+		}
+		while (ob_get_level() > $level)
+		{
+			ob_end_clean();
+		}
+	}
+
+	/** Called on kernel.terminate, after the answer has been sent to the browser */
+	public function run_deferred_notifications()
+	{
+		$list = $this->deferred_notifications;
+		$this->deferred_notifications = [];
+		if (empty($list))
+		{
+			return;
+		}
+		if (function_exists('ignore_user_abort'))
+		{
+			@ignore_user_abort(true);
+		}
+		if (function_exists('set_time_limit'))
+		{
+			@set_time_limit(120);
+		}
+		foreach ($list as $item)
+		{
+			$this->send_notifications($item[0], $item[1], false);
+		}
+	}
+
 	public function set_shares(array $row, $usernames, array $group_ids)
 	{
 		$owner_id = (int) $row['user_id'];
@@ -788,20 +852,14 @@ class note_manager
 		if (!empty($new_recipients))
 		{
 			$this->delete_notifications(self::TYPE_SHARED, [(int) $row['note_id']]);
-			try
-			{
-				$this->notification_manager->add_notifications(self::TYPE_SHARED, [
-					'note_id'		=> (int) $row['note_id'],
-					'user_id'		=> $owner_id,
-					'note_title'	=> $row['note_title'],
-					'note_excerpt'	=> $this->excerpt($row),
-					'recipients'	=> $new_recipients,
-				]);
-			}
-			catch (\Exception $e)
-			{
-				// Notifications are best effort
-			}
+			// many recipients (a whole group) and their push devices: sent after the answer
+			$this->send_notifications(self::TYPE_SHARED, [
+				'note_id'		=> (int) $row['note_id'],
+				'user_id'		=> $owner_id,
+				'note_title'	=> $row['note_title'],
+				'note_excerpt'	=> $this->excerpt($row),
+				'recipients'	=> $new_recipients,
+			]);
 		}
 
 		return ['added' => $new_recipients, 'missing' => $missing];
@@ -1011,21 +1069,15 @@ class note_manager
 			if ($method === self::NOTIFY_BELL || $method === self::NOTIFY_BOTH)
 			{
 				$this->delete_notifications(self::TYPE_REMINDER, [(int) $row['note_id']]);
-				try
-				{
-					$this->notification_manager->add_notifications(self::TYPE_REMINDER, [
-						'note_id'		=> (int) $row['note_id'],
-						'user_id'		=> (int) $row['user_id'],
-						'note_title'	=> $row['note_title'],
-						'note_excerpt'	=> $this->excerpt($row),
-						'reminder_time'	=> (int) $row['reminder_time'],
-						'note_page'		=> $row['note_scope'] === 'page' ? $row['note_page'] : '',
-					]);
-				}
-				catch (\Exception $e)
-				{
-					// Best effort
-				}
+				// sent at once (the bell counter in the answer must include it), but protected
+				$this->send_notifications(self::TYPE_REMINDER, [
+					'note_id'		=> (int) $row['note_id'],
+					'user_id'		=> (int) $row['user_id'],
+					'note_title'	=> $row['note_title'],
+					'note_excerpt'	=> $this->excerpt($row),
+					'reminder_time'	=> (int) $row['reminder_time'],
+					'note_page'		=> $row['note_scope'] === 'page' ? $row['note_page'] : '',
+				], false);
 			}
 
 			if ($method === self::NOTIFY_BELL && (int) $row['reminder_repeat'] > 0)

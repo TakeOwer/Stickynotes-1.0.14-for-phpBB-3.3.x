@@ -209,12 +209,17 @@
 		try {
 			return JSON.parse(text);
 		} catch (e) {
-			var start = String(text).indexOf('{"success"');
+			// something printed before and/or after the JSON (notices of other code)
+			var str = String(text), start = str.indexOf('{"success"');
 			if (start > -1) {
-				try {
-					return JSON.parse(String(text).slice(start));
-				} catch (e2) {
-					// fall through
+				var end = str.lastIndexOf('}'), tries = 0;
+				while (end > start && tries < 200) {
+					try {
+						return JSON.parse(str.slice(start, end + 1));
+					} catch (e2) {
+						end = str.lastIndexOf('}', end - 1);
+						tries++;
+					}
 				}
 			}
 			return $.Deferred().reject({ responseJSON: null }).promise();

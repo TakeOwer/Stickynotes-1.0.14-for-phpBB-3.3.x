@@ -66,6 +66,8 @@ class main_listener implements EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return [
+			// after the AJAX answer has been sent: deferred notifications (shares)
+			'kernel.terminate'								=> 'send_deferred_notifications',
 			'core.user_setup'								=> 'load_language',
 			'core.permissions'								=> 'add_permissions',
 			'core.viewtopic_assign_template_vars_before'	=> 'remember_topic',
@@ -267,6 +269,16 @@ class main_listener implements EventSubscriberInterface
 	/**
 	 * Every text used by the JavaScript comes from the language files
 	 */
+	/**
+	 * Notifications prepared during an AJAX request are sent here, when the
+	 * browser already has its answer: a slow or failing notification method
+	 * (e-mail, Web Push) can no longer turn a successful save into an error.
+	 */
+	public function send_deferred_notifications()
+	{
+		$this->manager->run_deferred_notifications();
+	}
+
 	protected function get_js_language()
 	{
 		$keys = [
